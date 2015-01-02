@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="SV_AlertOnWarning" title="SV: Alert on Warning" version_string="1.0.0" version_id="100000" url="" install_callback_class="SV_AlertOnWarning_Listener" install_callback_method="install" uninstall_callback_class="SV_AlertOnWarning_Listener" uninstall_callback_method="uninstall">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates/>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="load_class" execute_order="10" callback_class="SV_AlertOnWarning_Listener" callback_method="load_class" active="1" hint="XenForo_DataWriter_Warning" description="XenForo_DataWriter_Warning"/>
+    <listener event_id="load_class" execute_order="10" callback_class="SV_AlertOnWarning_Listener" callback_method="load_class" active="1" hint="XenForo_Model_Warning" description="XenForo_Model_Warning"/>
+    <listener event_id="load_class" execute_order="10" callback_class="SV_AlertOnWarning_Listener" callback_method="load_class" active="1" hint="XenForo_ControllerPublic_Member" description="XenForo_ControllerPublic_Member"/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups>
+    <option option_id="sv_alert_warning_anonymise" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="alerts" display_order="400"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="option_sv_alert_warning_anonymise" version_id="100000" version_string="1.0.0"><![CDATA[Anonymise Warning Alerts]]></phrase>
+    <phrase title="option_sv_alert_warning_anonymise_explain" version_id="100000" version_string="1.0.0"><![CDATA[Prevent users from seeing who issued warnings against them.<br/>
+<br/>
+Changing this does <b>not</b> apply retroactively.]]></phrase>
+    <phrase title="send_alert_on_warning" version_id="100000" version_string="1.0.0"><![CDATA[Send alert on warning]]></phrase>
+    <phrase title="warning_alert_text" version_id="100000" version_string="1.0.0"><![CDATA[{name} issued you a warning for <a {warning_attributes}>{warning_title}</a> for {points} points.]]></phrase>
+    <phrase title="warning_alert_text_anonymize" version_id="100000" version_string="1.0.0"><![CDATA[You have received a warning for <a {warning_attributes}>{warning_title}</a> for {points} points.]]></phrase>
+  </phrases>
+  <route_prefixes/>
+  <style_properties/>
+  <templates>
+    <template title="alert_warning_alert_warning" version_id="100000" version_string="1.0.0"><![CDATA[
+<xen:if is="{$user.user_id}">
+{xen:phrase warning_alert_text,
+'name={xen:helper username, $user, 'subject'}',
+'warning_attributes=href="{xen:link warnings, $content}" class="PopupItemLink"',
+'points={$content.points}',
+'warning_title={$content.title}'
+}  
+<xen:else/>
+{xen:phrase warning_alert_text_anonymize,
+'warning_attributes=href="{xen:link warnings, $content}" class="PopupItemLink"',
+'points={$content.points}',
+'warning_title={$content.title}'
+} 
+</xen:if>
+]]></template>
+  </templates>
+  <public_template_modifications>
+    <modification template="member_warn" modification_key="sv_integrated_member_warn" description="Sending Alerts on recieving a warning." execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#(<dt>{xen:phrase member_notification}:</dt>.*?<dd>.*?)(</dd>)#s]]></find>
+      <replace><![CDATA[$1$2
+<dt></dt>
+<dd><label><input type="checkbox" name="send_warning_alert" value="1" checked="checked" /> {xen:phrase send_alert_on_warning}</label></dd>]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
